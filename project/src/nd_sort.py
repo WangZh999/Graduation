@@ -30,7 +30,8 @@ def nd_sort(pop_obj, n_sort):
     return front_non, max_front
 
 
-pop_obj = np.array([[0, 9], [0, 8], [5, 4], [3, 5], [6, 5]])
-a, b = nd_sort(pop_obj, 3)
+if __name__ == "__main__":
+    pop_obj = np.array([[0, 9], [0, 8], [5, 4], [3, 5], [6, 5]])
+    a, b = nd_sort(pop_obj, 3)
 
-print(a, b)
+    print(a, b)

@@ -14,7 +14,7 @@ def environment_selection(population, n):
     :return: next generation population
     '''
     front_no, max_front = nd_sort(population[1], n)
-    next_label = [False for i in range(front_no.size)]
+    next_label = [False for _ in range(front_no.size)]
     for i in range(front_no.size):
         if front_no[i] < max_front:
             next_label[i] = True
