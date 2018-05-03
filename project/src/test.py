@@ -2,10 +2,11 @@ import os
 
 import tensorflow as tf
 
-from estimator import Estimator
+from estimator_iris_data import EstimatorIrisData
 
 if __name__ == '__main__':
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = '3'
     tf.logging.set_verbosity(tf.logging.ERROR)
-    test = Estimator(hidden_units=[10, 10, 10])
-    tf.app.run(test.eval)
+    test = EstimatorIrisData()
+    # print(tf.app.run(test.eval))
+    print(test.estimator([10, 10]))

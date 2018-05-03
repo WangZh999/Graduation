@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import tensorflow as tf
 
 TRAIN_URL = "http://download.tensorflow.org/data/iris_training.csv"
@@ -14,49 +15,69 @@ class IrisData(object):
         """Returns the iris dataset as (train_x, train_y), (test_x, test_y)."""
         train_path, test_path = self.maybe_download()
 
-        train = pd.read_csv(train_path, names=CSV_COLUMN_NAMES, header=0)
-        self.train_x, self.train_y = train, train.pop(y_name)
+        # Load datasets.
+        training_set = tf.contrib.learn.datasets.base.load_csv_with_header(
+            filename=train_path,
+            target_dtype=np.int,
+            features_dtype=np.float32)
+        test_set = tf.contrib.learn.datasets.base.load_csv_with_header(
+            filename=test_path,
+            target_dtype=np.int,
+            features_dtype=np.float32)
 
-        test = pd.read_csv(test_path, names=CSV_COLUMN_NAMES, header=0)
-        self.test_x, self.test_y = test, test.pop(y_name)
+        self.train_x=tf.constant(training_set.data)
+        self.train_y=tf.constant(training_set.target)
+        self.test_x = tf.constant(test_set.data)
+        self.test_y = tf.constant(test_set.target)
 
-    def train_input_fn(self, batch_size, features=None, labels=None):
+        #train = pd.read_csv(train_path, names=CSV_COLUMN_NAMES, header=0)
+        #self.train_x, self.train_y = train, train.pop(y_name)
+
+        #test = pd.read_csv(test_path, names=CSV_COLUMN_NAMES, header=0)
+        #self.test_x, self.test_y = test, test.pop(y_name)
+
+    def train_input_fn(self, features=None, labels=None):
         """An input function for training"""
         if features is None or labels is None:
             features = self.train_x
             labels = self.train_y
+        else:
+            features = features
+            labels = labels
 
-        # Convert the inputs to a Data set.
-        data_set = tf.data.Dataset.from_tensor_slices((dict(features), labels))
+            # Convert the inputs to a Data set.
+        # data_set = tf.data.Dataset.from_tensor_slices((dict(features), labels))
 
         # Shuffle, repeat, and batch the examples.
-        data_set = data_set.shuffle(1000).repeat().batch(batch_size)
+        # data_set = data_set.shuffle(1000).repeat().batch(batch_size)
 
         # Return the data_set.
-        return data_set
+        return features, labels
 
-    def eval_input_fn(self, batch_size, features=None, labels=None):
+    def eval_input_fn(self, features=None, labels=None):
         """An input function for evaluation or prediction"""
         if features is None or labels is None:
             features = self.test_x
             labels = self.test_y
-
-        features = dict(features)
-        if labels is None:
-            # No labels, use only features.
-            inputs = features
         else:
-            inputs = (features, labels)
+            features = features
+            labels = labels
+        # features = dict(features)
+        # if labels is None:
+        # No labels, use only features.
+        # inputs = features
+        # else:
+        # inputs = (features, labels)
 
         # Convert the inputs to a Data set.
-        data_set = tf.data.Dataset.from_tensor_slices(inputs)
+        # data_set = tf.data.Dataset.from_tensor_slices(inputs)
 
         # Batch the examples
-        assert batch_size is not None, "batch_size must not be None"
-        data_set = data_set.batch(batch_size)
+        # assert batch_size is not None, "batch_size must not be None"
+        # data_set = data_set.batch(batch_size)
 
         # Return the data_set.
-        return data_set
+        return features, labels
 
     @staticmethod
     def maybe_download():
