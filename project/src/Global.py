@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # encoding: utf-8
 
 import os
@@ -15,7 +14,7 @@ class Global(object):
     The problem related parameters and genetic operations
     """
 
-    def __init__(self, n=100, max_layer=5, max_note=20, m=2):
+    def __init__(self, max_layer=5, max_note=20, n=100, m=2):
         """
         初始化
         :param max_layer: 最多层数
@@ -56,7 +55,6 @@ class Global(object):
         n = pop_dec.shape[0]
         pop_obj = np.zeros((n, self.M))
         for i in range(n):
-            print(pop_dec[i])
             pop_obj[i, 0] = np.sum(pop_dec[i])
             pop_obj[i, 1] = self.eval.estimator(hidden_units=pop_dec[i], train_steps=50)
 
@@ -69,6 +67,11 @@ class Global(object):
         offspring_dec = []
         for i in range(len(pop_dec_format) // 2):
             temp_dec_1, temp_dec_2 = crossover(pop_dec_format[2 * i], pop_dec_format[2 * i + 1], item_max=self.max_note)
+            if 0 == np.sum(temp_dec_1):
+                temp_dec_1 = init_one_item(self.max_layer, self.max_note)
+            if 0 == np.sum(temp_dec_2):
+                temp_dec_2 = init_one_item(self.max_layer, self.max_note)
+
             offspring_dec += [temp_dec_1]
             offspring_dec += [temp_dec_2]
 
@@ -95,17 +98,15 @@ def crossover(dec_1, dec_2, item_max=20):
             dec_after_temp_1[i] = dec_2[i]
             dec_after_temp_2[i] = dec_1[i]
 
-    if 0 == np.sum(dec_after_temp_1):
-        dec_after_temp_1 = dec_1
-    if 0 == np.sum(dec_after_temp_2):
-        dec_after_temp_2 = dec_2
-
-    mutation = random.randint(-2, 2)
+    mutation_range = item_max // 5
+    if 0 == mutation_range:
+        mutation_range = 1
+    mutation = random.randint(-mutation_range, mutation_range)
     for i in range(len(dec_1)):
         if dec_after_temp_1[i] > 0:
-            dec_after_temp_1[i] += mutation
+            dec_after_temp_1[i] = (dec_after_temp_1[i] + mutation) % (item_max + 1)
         if dec_after_temp_2[i] > 0:
-            dec_after_temp_2[i] += mutation
+            dec_after_temp_2[i] = (dec_after_temp_2[i] + mutation) % (item_max + 1)
 
     dec_after_1 = []
     dec_after_2 = []
@@ -146,6 +147,12 @@ def random_n(n, max):
     """
     result_list = random.sample(range(max), n)
     return sorted(result_list)
+
+
+def init_one_item(max_col, max_value):
+    d = random.randint(1, max_col)
+    _item = [random.randint(1, max_value) for _ in range(d)]
+    return _item
 
 
 if __name__ == '__main__':

@@ -24,7 +24,7 @@ class Estimator(object):
         # (train_x, train_y), (test_x, test_y) = iris_data.load_data()
 
         # Feature columns describe how to use the input.
-        #my_feature_columns = []
+        # my_feature_columns = []
         # for key in iris_data.train_x.keys():
         #     my_feature_columns.append(tf.feature_column.numeric_column(key=key))
 

@@ -16,8 +16,6 @@ IRIS_TRAINING_URL = "http://download.tensorflow.org/data/iris_training.csv"
 IRIS_TEST = "iris_test.csv"
 IRIS_TEST_URL = "http://download.tensorflow.org/data/iris_test.csv"
 
-wangzhuang = [10, 10, 15, 10]
-
 
 class EstimatorIrisData(object):
     def __init__(self):
@@ -32,7 +30,7 @@ class EstimatorIrisData(object):
             with open(IRIS_TEST, "wb") as f:
                 f.write(raw)
 
-        # Load datasets.
+        # Load data sets.
         self.training_set = tf.contrib.learn.datasets.base.load_csv_with_header(
             filename=IRIS_TRAINING,
             target_dtype=np.int,
@@ -57,15 +55,20 @@ class EstimatorIrisData(object):
         test_y = tf.constant(self.test_set.target)
         return test_x, test_y
 
-    def estimator(self, hidden_units=[10, 10], train_steps=1000):
-        # Build 3 layer DNN with 10, 20, 10 units respectively.
+    def estimator(self, hidden_units=None, train_steps=100, n_classes=3, data_set=0):
+        if hidden_units is None:
+            hidden_units = [6, 6]
+
         classifier = tf.contrib.learn.DNNClassifier(feature_columns=self.feature_columns,
                                                     hidden_units=hidden_units,
-                                                    n_classes=3)
+                                                    n_classes=n_classes)
 
         # Fit model.
         classifier.fit(input_fn=self.get_train_inputs, steps=train_steps)
 
         # Evaluate accuracy.
-        accuracy_score = classifier.evaluate(input_fn=self.get_test_inputs, steps=1)
+        if 0 == data_set:
+            accuracy_score = classifier.evaluate(input_fn=self.get_train_inputs, steps=1)
+        else:
+            accuracy_score = classifier.evaluate(input_fn=self.get_test_inputs, steps=1)
         return accuracy_score["loss"]
