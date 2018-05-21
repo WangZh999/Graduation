@@ -55,20 +55,11 @@ class EstimatorIrisData(object):
         test_y = tf.constant(self.test_set.target)
         return test_x, test_y
 
-    def estimator(self, hidden_units=None, train_steps=100, n_classes=3, data_set=True):
-        """
-
-        :param hidden_units:
-        :param train_steps:
-        :param n_classes:
-        :param data_set:
-        :return:
-        """
-
+    def estimator(self, hidden_units=None, train_steps=100, n_classes=3, data_set=0):
         if hidden_units is None:
             hidden_units = [6, 6]
 
-        print("hidden units: ",hidden_units,"    train steps: ",train_steps)
+        print(hidden_units)
 
         classifier = tf.contrib.learn.DNNClassifier(feature_columns=self.feature_columns,
                                                     hidden_units=hidden_units,
@@ -78,9 +69,8 @@ class EstimatorIrisData(object):
         classifier.fit(input_fn=self.get_train_inputs, steps=train_steps)
 
         # Evaluate accuracy.
-        if data_set:
+        if 0 == data_set:
             accuracy_score = classifier.evaluate(input_fn=self.get_train_inputs, steps=1)
-            return accuracy_score["loss"]
         else:
             accuracy_score = classifier.evaluate(input_fn=self.get_test_inputs, steps=1)
-            return accuracy_score["loss"]
+        return accuracy_score["loss"]

@@ -9,6 +9,7 @@ import tensorflow as tf
 from estimator_iris_data import EstimatorIrisData
 
 
+
 class Global(object):
     """
     The problem related parameters and genetic operations
@@ -57,9 +58,7 @@ class Global(object):
         pop_obj = np.zeros((n, self.M))
         for i in range(n):
             pop_obj[i, 0] = np.sum(pop_dec[i])
-            train_steps = 300 + pop_obj[i, 0] * 40
-            # pop_obj[i, 1] = self.eval.estimator(hidden_units=pop_dec[i], train_steps=self.train_steps)
-            pop_obj[i, 1] = self.eval.estimator(hidden_units=pop_dec[i], train_steps=train_steps)
+            pop_obj[i, 1] = self.eval.estimator(hidden_units=pop_dec[i], train_steps=self.train_steps)
 
         return pop_obj
 
