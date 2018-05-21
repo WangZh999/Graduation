@@ -8,7 +8,7 @@ from environment_init import environment_init
 from environment_selection import environment_selection
 from nd_sort import nd_sort
 
-nsga_global = Global(max_layer=4, max_note=8, n=50, m=2, train_steps=80)
+nsga_global = Global(max_layer=3, max_note=6, n=20, m=2)
 
 
 class NSGA_II(object):
@@ -26,6 +26,8 @@ class NSGA_II(object):
             parent_obj = nsga_global.cost_fun(parent_dec)
 
         for _ in range(self.iter):
+            print("\n\n", _, "\n\n")
+
             offspring_dec = nsga_global.get_offspring(parent_dec)
             offspring_obj = nsga_global.cost_fun(offspring_dec)
 
